@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+  This plugin provides <a href="https://square.github.io/okhttp/">OkHttp</a> for other plugins.
+</div>

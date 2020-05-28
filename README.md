@@ -1,2 +1,0 @@
-# okhttp-plugin
-OkHttp Plugin
