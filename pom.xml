@@ -16,7 +16,7 @@
   </licenses>
 
   <groupId>io.jenkins.plugins</groupId>
-  <artifactId>okhttp</artifactId>
+  <artifactId>okhttp-api</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>OkHttp Plugin</name>
