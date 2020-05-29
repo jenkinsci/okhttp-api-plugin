@@ -15,6 +15,7 @@
     </license>
   </licenses>
 
+  <groupId>io.jenkins.plugins</groupId>
   <artifactId>okhttp</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
