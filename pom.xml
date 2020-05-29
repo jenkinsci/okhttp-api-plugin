@@ -20,7 +20,7 @@
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>OkHttp Plugin</name>
-  <url>https://github.com/bitwiseman/okhttp</url>
+  <url>https://github.com/jenkinsci/okhttp-api-plugin</url>
 
   <properties>
     <revision>3.12.12-beta1</revision>
