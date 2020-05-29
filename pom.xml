@@ -29,15 +29,10 @@
     <no-test-jar>false</no-test-jar>
     <okhttp.version>2.7.5</okhttp.version>
     <okhttp3.version>3.12.12</okhttp3.version>
-    <okio.version>2.6.0</okio.version>
+    <okio.version>1.17.5</okio.version>
   </properties>
 
   <dependencies>
-    <dependency>
-      <groupId>com.squareup.okio</groupId>
-      <artifactId>okio</artifactId>
-      <version>${okio.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
@@ -60,6 +55,16 @@
     </dependency>
   </dependencies>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- Okio versions separate from okhttp and we want to pull in later versions -->
+      <dependency>
+        <groupId>com.squareup.okio</groupId>
+        <artifactId>okio</artifactId>
+        <version>${okio.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
   <repositories>
     <repository>
