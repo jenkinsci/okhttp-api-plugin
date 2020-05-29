@@ -17,13 +17,13 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>okhttp-api</artifactId>
-  <version>3.12.12-beta2</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>OkHttp Plugin</name>
   <url>https://github.com/jenkinsci/okhttp-api-plugin</url>
 
   <properties>
-    <revision>3.12.12-beta2</revision>
+    <revision>3.12.12-beta3</revision>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.164.3</jenkins.version>
     <java.level>8</java.level>
@@ -85,6 +85,6 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>okhttp-api-3.12.12-beta2</tag>
+    <tag>${scmTag}</tag>
   </scm>
 </project>
