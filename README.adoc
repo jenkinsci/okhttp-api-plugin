@@ -4,7 +4,7 @@ This plugin manages okhttp library version for Jenkins plugins.
 
 It includes the following packages:
 
-* com.squareup.okio:okio:jar - required by okhttp
+* `com.squareup.okio:okio` - required by `okhttp`
 * `com.squareup.okhttp3:okhttp`
 * `com.squareup.okhttp3:logging-interceptor` - commonly used by a number of plugins
 * `com.squareup.okhttp:okhttp` - (v2.7.5) for backward compatibility while moving to okhttp3
