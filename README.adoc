@@ -1,3 +1,189 @@
-# OkHttp Plugin for Jenkins
+# OkHttp API Plugin for Jenkins
 
-OkHttp Plugin
+This plugin manages okhttp library version for Jenkins plugins.
+
+It includes the following packages:
+
+* com.squareup.okio:okio:jar - required by okhttp
+* `com.squareup.okhttp3:okhttp`
+* `com.squareup.okhttp3:logging-interceptor` - commonly used by a number of plugins
+* `com.squareup.okhttp:okhttp` - (v2.7.5) for backward compatibility while moving to okhttp3
+* `com.squareup.okhttp:okhttp-urlconnection` - (v2.7.5) for backward compatibility while moving to okhttp3
+
+## Plugins using this plugin
+
+* github-api
+
+## Plugins bundling okhttp
+
+Below are the list of other plugins that bundle on okhttp in various ways rather than depending on this plugin.  
+The different groups have differing levels of risk related to switching to using okhttp-api-plugin.
+
+### okhttp 4.x
+
+*Moderate to low risk*
+
+okhttp 4.x (aka okhttp3 v4.x) has strong api stability across its lifetime, but may not be backward compatible with v3.x. 
+Thus it is moderate risk in the current state, but low risk once okhttp-api-plugin is updated to a relatively recent 4.x version. 
+
+```
+defensics: okhttp-4.6.0.jar
+octoperf: okhttp-4.3.0.jar
+teamscale-upload: okhttp-4.2.1.jar
+tuleap-api: okhttp-4.4.1.jar
+tuleap-git-branch-source: okhttp-4.5.0.jar
+worktile: okhttp-4.5.0.jar
+```
+
+### okhttp 3.x
+
+*Low risk* 
+
+okhttp 3.x (aka okhttp3 v3.x) has strong api stability across its lifetime. 
+
+```
+BlazeMeterJenkinsPlugin: okhttp-3.6.0.jar
+adobe-cloud-manager: okhttp-3.14.7.jar
+alauda-devops-pipeline: okhttp-3.12.0.jar
+alauda-devops-sync: okhttp-3.12.0.jar
+alauda-kubernetes-support: okhttp-3.12.0.jar
+alauda-pipeline: okhttp-3.9.0.jar
+appcenter: okhttp-3.14.3.jar
+atlassian-bitbucket-server-integration: okhttp-3.14.1.jar
+atlassian-jira-software-cloud: okhttp-3.14.1.jar
+azure-artifact-manager: okhttp-3.14.1.jar
+azure-credentials-ext: okhttp-3.12.6.jar
+ca-apm: okhttp-3.1.1.jar
+cloudshell-sandbox: okhttp-3.12.0.jar
+conjur-credentials: okhttp-3.11.0.jar
+conjur-simple-integration: okhttp-3.11.0.jar
+docker-swarm: okhttp-3.10.0.jar
+easyqa: okhttp-3.3.1.jar
+elastest: okhttp-3.12.0.jar
+fabric-beta-publisher: okhttp-3.12.0.jar
+fedora-module-build-system: okhttp-3.8.1.jar
+fortify-on-demand-uploader: okhttp-3.9.0.jar
+git-changelog: okhttp-3.2.0.jar
+github-api: okhttp-3.12.12.jar
+graphql-server: okhttp-3.2.0.jar
+hubot-steps: okhttp-3.12.0.jar
+ibm-continuous-release: okhttp-3.5.0.jar
+influxdb-query: okhttp-3.5.0.jar
+influxdb: okhttp-3.14.4.jar
+jira-steps: okhttp-3.14.7.jar
+jx-pipelines: okhttp-3.8.1.jar
+jx-resources: okhttp-3.12.0.jar
+kubernetes-cd: okhttp-3.14.3.jar
+kubernetes-ci: okhttp-3.2.0.jar
+kubernetes-client-api: okhttp-3.12.6.jar
+kubernetes-pipeline-devops-steps: okhttp-3.9.0.jar
+macstadium-orka: okhttp-3.14.2.jar
+minio-storage: okhttp-3.7.0.jar
+nomad: okhttp-3.10.0.jar
+notify-events: okhttp-3.8.1.jar
+onesky: okhttp-3.4.2.jar
+openshift-pipeline: okhttp-ws-3.3.1.jar
+openshift-pipeline: okhttp-3.3.1.jar
+openshift-sync: okhttp-3.12.0.jar
+openstack-cloud: okhttp-3.9.1.jar
+openstack-cloud: openstack4j-okhttp-3.6.jar
+outbound-webhook: okhttp-3.8.1.jar
+pangolin-testrail-connector: okhttp-3.8.1.jar
+performance-signature-dynatrace: okhttp-3.14.4.jar
+performance-signature-dynatracesaas: okhttp-3.14.4.jar
+pipeline-huaweicloud-plugin: okhttp-3.10.0.jar
+protecode-sc: okhttp-3.13.1.jar
+qiniu: okhttp-3.14.4.jar
+qualityclouds: okhttp-3.3.0.jar
+rapid7-insightvm-container-assessment: okhttp-3.6.0.jar
+remoting-kafka: okhttp-3.12.0.jar
+sonar: okhttp-3.7.0.jar
+sweagle: okhttp-3.4.2.jar
+testquality-updater: okhttp-3.5.0.jar
+urbancode-velocity: okhttp-3.5.0.jar
+webhook-eventsource: okhttp-3.3.0.jar
+xframium: okhttp-3.10.0.jar
+yet-another-docker-plugin: okhttp-3.14.4.jar
+yet-another-docker-plugin: docker-java-transport-okhttp-3.2.0.jar
+```
+
+### okhttp-urlconnection 3.x
+
+*High risk*
+
+Support for okhttp-urlconnection was dropped in 3.14.x and later.  It only valid in 3.12x and earlier. It might be possible to lock okhttp-urlconnection to 3.12.x while moving okhttp itself forward to 3.14 and later versions, but it is not a supported scenario and will break sooner or later.  
+
+```
+azure-acs: okhttp-urlconnection-3.11.0.jar
+azure-ad: okhttp-3.11.0.jar
+azure-ad: okhttp-urlconnection-3.11.0.jar
+azure-app-service: okhttp-3.11.0.jar
+azure-app-service: okhttp-urlconnection-3.11.0.jar
+azure-artifact-manager: okhttp-3.14.1.jar
+azure-batch-parallel: okhttp-3.3.1.jar
+azure-batch-parallel: okhttp-urlconnection-3.3.1.jar
+azure-commons: okhttp-3.12.0.jar
+azure-commons: okhttp-urlconnection-3.11.0.jar
+azure-container-agents: okhttp-3.11.0.jar
+azure-container-agents: okhttp-urlconnection-3.11.0.jar
+azure-container-registry-tasks: okhttp-3.12.0.jar
+azure-container-registry-tasks: okhttp-urlconnection-3.11.0.jar
+azure-credentials-ext: okhttp-3.12.6.jar
+azure-credentials: okhttp-3.12.6.jar
+azure-credentials: okhttp-urlconnection-3.12.2.jar
+azure-function: okhttp-3.4.2.jar
+azure-function: okhttp-urlconnection-3.4.2.jar
+azure-iot-edge: okhttp-3.4.2.jar
+azure-iot-edge: okhttp-urlconnection-3.4.2.jar
+azure-vm-agents: okhttp-3.4.2.jar
+azure-vm-agents: okhttp-urlconnection-3.4.2.jar
+azure-vmss: okhttp-3.14.7.jar
+azure-vmss: okhttp-urlconnection-3.4.2.jar
+okhttp-api: okhttp-3.12.12.jar
+okhttp-api: okhttp-urlconnection-3.12.12.jar
+service-fabric: okhttp-3.4.2.jar
+service-fabric: okhttp-urlconnection-3.4.2.jar
+upload-pgyer: okhttp-3.10.0.jar
+upload-pgyer: okhttp-urlconnection-3.10.0.jar
+```
+
+
+### okhttp 2.x
+
+*Low risk, but not recommended*
+
+We can easlily to keep okhttp 2.7.5 (including urlconnection) in the plugin for the foreseeable future. 
+These plugins could be updated to use okhttp-api-plugin with little to no risk of breakages. 
+However, we recommend updating to using okhttp3 before adding this dependency.
+
+A few of these include okhttp-ws.  We will not be including that in the okhttp-api-plugin. We'll leave it to those projects to maintain that version on their own.  
+
+```
+alauda-devops-pipeline: okhttp-2.7.5.jar
+alauda-devops-sync: okhttp-2.7.5.jar
+alauda-kubernetes-support: okhttp-ws-2.7.5.jar
+alauda-kubernetes-support: okhttp-2.7.5.jar
+azure-dev-spaces: okhttp-2.7.5.jar
+azure-dev-spaces: okhttp-ws-2.7.5.jar
+bitbucket-approve: okhttp-2.1.0.jar
+coding-webhook: okhttp-urlconnection-2.5.0.jar
+coding-webhook: okhttp-2.5.0.jar
+fortify: okhttp-2.7.5.jar
+frugal-testing: okhttp-2.7.5.jar
+git-changelog: okhttp-2.7.5.jar
+github: okhttp-2.7.5.jar
+github: okhttp-urlconnection-2.7.5.jar
+http-post: okhttp-2.1.0.jar
+incapptic-connect-uploader: okhttp-2.7.5.jar
+jclouds-jenkins: jclouds-okhttp-2.2.0.jar
+jclouds-jenkins: okhttp-2.2.0.jar
+kiuwanJenkinsPlugin: okhttp-2.7.5.jar
+kubernetes-ci: okhttp-2.7.2.jar
+kubernetes-ci: okhttp-ws-2.7.2.jar
+mdt-deployment: okhttp-2.3.0.jar
+okhttp-api: okhttp-2.7.5.jar
+okhttp-api: okhttp-urlconnection-2.7.5.jar
+release-helper: okhttp-2.4.0.jar
+```
+
+
