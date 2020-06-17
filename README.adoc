@@ -109,9 +109,11 @@ yet-another-docker-plugin: docker-java-transport-okhttp-3.2.0.jar
 
 ### okhttp-urlconnection 3.x
 
-*High risk*
+*High risk, code changes required*
 
-Support for okhttp-urlconnection was dropped in 3.14.x and later.  It only valid in 3.12x and earlier. It might be possible to lock okhttp-urlconnection to 3.12.x while moving okhttp itself forward to 3.14 and later versions, but it is not a supported scenario and will break sooner or later.  
+Support for `okhttp-urlconnection` was dropped in 3.14.x and later.
+It only valid in 3.12x and earlier. 
+See the release notes for 3.14.0: https://square.github.io/okhttp/changelog_3x/#version-3140 for temporary helper class workaround.
 
 ```
 azure-acs: okhttp-urlconnection-3.11.0.jar
