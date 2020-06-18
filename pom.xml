@@ -28,7 +28,6 @@
     <jenkins.version>2.164.3</jenkins.version>
     <java.level>8</java.level>
     <no-test-jar>false</no-test-jar>
-    <okhttp.version>2.7.5</okhttp.version>
     <okhttp3.version>3.14.9</okhttp3.version>
     <okio.version>1.17.5</okio.version>
   </properties>
@@ -49,16 +48,6 @@
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>logging-interceptor</artifactId>
       <version>${okhttp3.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.squareup.okhttp</groupId>
-      <artifactId>okhttp</artifactId>
-      <version>${okhttp.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.squareup.okhttp</groupId>
-      <artifactId>okhttp-urlconnection</artifactId>
-      <version>${okhttp.version}</version>
     </dependency>
   </dependencies>
 
