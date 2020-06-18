@@ -15,10 +15,10 @@ This plugin **does not** include the following packages:
 * `com.squareup.okhttp:*` (all v2.x okhttp packages) - 
   The last release in this line was v2.7.5 (2016-02-25).  
   It is not longer supported in any way. 
-  Including them would only increase the risk this plugin introducing security vulnerablities and bugs.
+  Including them would only increase the risk of this plugin introducing security vulnerabilities and bugs.
   Plugins that want to use this plugin should update to use `okhttp3`. 
 * `com.squareup.okhttp3:okhttp-urlconnection` - 
-  This package contained the `OkHttpUrlFactory` which provide a facade implementing 
+  This package contained the `OkHttpUrlFactory` class which provides a facade implementing 
   link:https://docs.oracle.com/javase/8/docs/api/java/net/HttpURLConnection.html[HttpURLConnection] for okhttp.
   `OkHttpUrlFactory` was deprecated in 
   link:https://square.github.io/okhttp/changelog_3x/#version-300-rc1[v3.0.0-RC1 (2016-01-02)]
@@ -26,7 +26,7 @@ This plugin **does not** include the following packages:
   link:https://square.github.io/okhttp/changelog_3x/#version-3140[v3.14.x (2019-03-14)] 
   so there is no reason to include this package.
   Plugins that use `OkHttpUrlFactory` and want to use this plugin are strongly advised to upgrade to OkHttp's request/response API directly.
-  If that is not feasible, they can copy in a copy and paste 
+  If that is not feasible, they can copy and paste 
   link:https://gist.github.com/swankjesse/dd91c0a8854e1559b00f5fc9c7bfae70[ObsoleteUrlFactory.java] into their project.
 
 ## Plugins using this plugin
@@ -45,7 +45,7 @@ The plugins are grouped based which version and packages they bundle.
 link:https://square.github.io/okhttp/upgrading_to_okhttp_4/[With a few small exceptions], 
 OkHttp 4.x is both binary- and Java source-compatible with OkHttp 3.x. 
 You can use an OkHttp 4.x .jar file with applications or libraries built for OkHttp 3.x. 
-However, plugins that use OkHttp x4.x may depend on features not present in OkHttp 3.x.
+However, plugins that use OkHttp 4.x may depend on features not present in OkHttp 3.x.
 
 Thus updating these plugins to use `okhttp-api-plugin` is currently moderate risk.  This will become low risk once `okhttp-api-plugin` is updated to a relatively recent 4.x version. 
 
@@ -182,7 +182,7 @@ This was done intentionally to avoid potential security issues related to bundli
 
 The plugins below could be updated to use okhttp-api-plugin if they upgrade to using okhttp3.
 
-There is some risk of this plugin effecting the plugins below - both `okhttp` and `okhttp3` depend on `okio`.  However, `okio` is also extremely stable and is unlikely to introduce breaking changes.
+There is some risk of this plugin affecting the plugins below - both `okhttp` and `okhttp3` depend on `okio`.  However, `okio` is also extremely stable and is unlikely to introduce breaking changes.
 
 ```
 alauda-devops-pipeline: okhttp-2.7.5.jar
@@ -209,5 +209,4 @@ kubernetes-ci: okhttp-ws-2.7.2.jar
 mdt-deployment: okhttp-2.3.0.jar
 release-helper: okhttp-2.4.0.jar
 ```
-
 
