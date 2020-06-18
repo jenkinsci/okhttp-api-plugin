@@ -2,13 +2,32 @@
 
 This plugin manages okhttp library version for Jenkins plugins.
 
-It includes the following packages:
+This plugin includes the following packages:
 
 * `com.squareup.okio:okio` - required by `okhttp`
 * `com.squareup.okhttp3:okhttp`
 * `com.squareup.okhttp3:logging-interceptor` - commonly used by a number of plugins
-* `com.squareup.okhttp:okhttp` - (v2.7.5) for backward compatibility while moving to okhttp3
-* `com.squareup.okhttp:okhttp-urlconnection` - (v2.7.5) for backward compatibility while moving to okhttp3
+
+Other `com.squareup.okhttp3.*` packages may be added upon request. 
+
+This plugin **does not** include the following packages:
+
+* `com.squareup.okhttp:*` (all v2.x okhttp packages) - 
+  The last release in this line was v2.7.5 (2016-02-25).  
+  It is not longer supported in any way. 
+  Including them would only increase the risk this plugin introducing security vulnerablities and bugs.
+  Plugins that want to use this plugin should update to use `okhttp3`. 
+* `com.squareup.okhttp3:okhttp-urlconnection` - 
+  This package contained the `OkHttpUrlFactory` which provide a facade implementing 
+  link:https://docs.oracle.com/javase/8/docs/api/java/net/HttpURLConnection.html[HttpURLConnection] for okhttp.
+  `OkHttpUrlFactory` was deprecated in 
+  link:https://square.github.io/okhttp/changelog_3x/#version-300-rc1[v3.0.0-RC1 (2016-01-02)]
+  and was removed as of
+  link:https://square.github.io/okhttp/changelog_3x/#version-3140[v3.14.x (2019-03-14)] 
+  so there is no reason to include this package.
+  Plugins that use `OkHttpUrlFactory` and want to use this plugin are strongly advised to upgrade to OkHttp's request/response API directly.
+  If that is not feasible, they can copy in a copy and paste 
+  link:https://gist.github.com/swankjesse/dd91c0a8854e1559b00f5fc9c7bfae70[ObsoleteUrlFactory.java] into their project.
 
 ## Plugins using this plugin
 
@@ -16,15 +35,19 @@ It includes the following packages:
 
 ## Plugins bundling okhttp
 
-Below are the list of other plugins that bundle on okhttp in various ways rather than depending on this plugin.  
-The different groups have differing levels of risk related to switching to using okhttp-api-plugin.
+Below are the list of other plugins that bundle on okhttp in various ways rather than using `okhttp-api-plugin`.  
+The plugins are grouped based which version and packages they bundle.
 
 ### okhttp 4.x
 
 *Moderate to low risk*
 
-okhttp 4.x (aka okhttp3 v4.x) has strong api stability across its lifetime, but may not be backward compatible with v3.x. 
-Thus it is moderate risk in the current state, but low risk once okhttp-api-plugin is updated to a relatively recent 4.x version. 
+link:https://square.github.io/okhttp/upgrading_to_okhttp_4/[With a few small exceptions], 
+OkHttp 4.x is both binary- and Java source-compatible with OkHttp 3.x. 
+You can use an OkHttp 4.x .jar file with applications or libraries built for OkHttp 3.x. 
+However, plugins that use OkHttp x4.x may depend on features not present in OkHttp 3.x.
+
+Thus updating these plugins to use `okhttp-api-plugin` is currently moderate risk.  This will become low risk once `okhttp-api-plugin` is updated to a relatively recent 4.x version. 
 
 ```
 defensics: okhttp-4.6.0.jar
@@ -109,10 +132,10 @@ yet-another-docker-plugin: docker-java-transport-okhttp-3.2.0.jar
 
 ### okhttp-urlconnection 3.x
 
-*High risk, code changes required*
+*Code changes required*
 
 Support for `okhttp-urlconnection` was dropped in 3.14.x and later.
-It only valid in 3.12x and earlier. 
+It only valid in 3.12.x and earlier. 
 See the release notes for 3.14.0: https://square.github.io/okhttp/changelog_3x/#version-3140 for temporary helper class workaround.
 
 ```
@@ -152,14 +175,14 @@ upload-pgyer: okhttp-urlconnection-3.10.0.jar
 
 ### okhttp 2.x
 
-*Low risk, code changes required*
+*Code changes required*
 
 This plugin does not include okhttp v2.x. 
 This was done intentionally to avoid potential security issues related to bundling a version that is no longer maintained in any way.
 
-The plugins below could be updated to use okhttp-api-plugin if they update to using okhttp3.
+The plugins below could be updated to use okhttp-api-plugin if they upgrade to using okhttp3.
 
-There is some risk of this plugin effecting the plugins below - both depend on `okio`.  However, `okio` is also extremely stable and is unlikely to introduce breaking changes.
+There is some risk of this plugin effecting the plugins below - both `okhttp` and `okhttp3` depend on `okio`.  However, `okio` is also extremely stable and is unlikely to introduce breaking changes.
 
 ```
 alauda-devops-pipeline: okhttp-2.7.5.jar
