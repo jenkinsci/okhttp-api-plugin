@@ -33,6 +33,18 @@ This plugin **does not** include the following packages:
 
 * github-api
 
+## Updating to a newer version of okhttp
+
+The current plan is to release a series of progressive updates along the okhttp 4.x release line until the plugin is up-to-date with current releases. 
+
+This is project includes a few tests (using the github-api library) that sanity check that the okhttp version being included doesn't completely break existing behavior.  
+
+The okhttp library in general is large enough that tests beyond sanity checks would have limited usefulness.
+link:https://square.github.io/okhttp/upgrading_to_okhttp_4/[With a few small exceptions], 
+OkHttp 4.x is both binary- and Java source-compatible with OkHttp 3.x.
+The okhttp team has worked very hard to not introduce breaking changes.
+Still, be sure to carefully review the okhttp release notes before updating to a newer version okhttp. 
+
 ## Plugins bundling okhttp
 
 Below are the list of other plugins that bundle on okhttp in various ways rather than using `okhttp-api-plugin`.  
