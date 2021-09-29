@@ -9,6 +9,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Provides an asynchronous-like mechanism to OkHttp to get a response in an asynchronous way.
+ *
+ * @param <T> Type returned when a {@link Response} is get.
+ */
 public class OkHttpFuture<T> extends CompletableFuture<T> {
     private static final Logger LOGGER = Logger.getLogger(OkHttpFuture.class.getName());
     private final Call call;

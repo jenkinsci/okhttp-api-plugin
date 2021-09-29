@@ -21,6 +21,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+/**
+ * This class allows to take into consideration if Jenkins is running behind a proxy or not and return a proper {@link OkHttpClient}
+ * client.
+ */
 public class JenkinsOkHttpClient {
 
     private static final Logger LOGGER = Logger.getLogger(JenkinsOkHttpClient.class.getName());
