@@ -1,5 +1,7 @@
 package jenkins.plugins.okhttp.api;
 
+import io.jenkins.jenkins.plugins.okhttp.api.JenkinsOkHttpClient;
+import io.jenkins.jenkins.plugins.okhttp.api.OkHttpFuture;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;

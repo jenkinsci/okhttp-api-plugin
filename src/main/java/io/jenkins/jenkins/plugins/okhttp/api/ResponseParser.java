@@ -1,4 +1,4 @@
-package jenkins.plugins.okhttp.api;
+package io.jenkins.jenkins.plugins.okhttp.api;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import okhttp3.Call;

@@ -1,4 +1,4 @@
-package jenkins.plugins.okhttp.api;
+package io.jenkins.jenkins.plugins.okhttp.api;
 
 import okhttp3.Call;
 import okhttp3.Callback;
