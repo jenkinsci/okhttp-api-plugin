@@ -114,38 +114,6 @@ public class JenkinsOkHttpClient {
         return reBuild;
     }
 
-    /**
-     * Updates non-proxy-hosts on the given client (returns a new builder object as a rebuild of the given one).
-     * @param httpClient the base client
-     * @param nonProxyHosts list of non proxy hosts patterns
-     * @return the builder for the new client
-     */
-    public static OkHttpClient.Builder withNonProxyHosts(OkHttpClient httpClient, List<String> nonProxyHosts) {
-        ProxySelector proxySelector = httpClient.proxySelector();
-        List<Pattern> noProxyHostPatterns = ProxyConfiguration.getNoProxyHostPatterns(String.join(",", nonProxyHosts));
-        OkHttpClient.Builder reBuild = httpClient.newBuilder();
-        reBuild.proxySelector(new ProxySelector() {
-            @Override
-            public List<Proxy> select(URI uri) {
-                final List<Proxy> proxies = new ArrayList<>(1);
-                String host = uri.getHost();
-                for (Pattern p : noProxyHostPatterns) {
-                    if (p.matcher(host).matches()) {
-                        proxies.add(Proxy.NO_PROXY);
-                        return proxies;
-                    }
-                }
-                return proxySelector.select(uri);
-            }
-
-            @Override
-            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-                LOGGER.log(Level.WARNING, "Proxy connection failed", ioe);
-            }
-        });
-        return reBuild;
-    }
-
     private static void applyInsecureConfiguration(OkHttpClient.Builder reBuild) throws NoSuchAlgorithmException, KeyManagementException {
         final TrustManager[] trustAllCerts = new TrustManager[] {
                 new X509TrustManager() {
