@@ -1,6 +1,5 @@
 package io.jenkins.jenkins.plugins.okhttp.api;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.ProxyConfiguration;
 import jenkins.model.Jenkins;
 import okhttp3.Authenticator;
@@ -9,24 +8,14 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
-import org.kohsuke.accmod.Restricted;
-import org.kohsuke.accmod.restrictions.NoExternalUse;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -40,13 +29,6 @@ import java.util.regex.Pattern;
 public class JenkinsOkHttpClient {
 
     private static final Logger LOGGER = Logger.getLogger(JenkinsOkHttpClient.class.getName());
-
-    /**
-     * Override to enable insecure handling of TLS connections.
-     */
-    @SuppressFBWarnings(value = "MS_SHOULD_BE_FINAL", justification = "Allow runtime modification")
-    @Restricted(NoExternalUse.class) // no direct linking against this field please
-    private static boolean acceptAnyCertificate = Boolean.getBoolean(JenkinsOkHttpClient.class.getName() + ".acceptAnyCertificate");
 
     private JenkinsOkHttpClient() {
     }
@@ -104,37 +86,6 @@ public class JenkinsOkHttpClient {
             reBuild.proxy(Proxy.NO_PROXY);
         }
 
-        if (acceptAnyCertificate) {
-            try {
-                applyInsecureConfiguration(reBuild);
-            } catch (NoSuchAlgorithmException | KeyManagementException e) {
-                LOGGER.log(Level.WARNING, "Cannot apply insecure trust all certs configuration to okhttp", e);
-            }
-        }
         return reBuild;
-    }
-
-    private static void applyInsecureConfiguration(OkHttpClient.Builder reBuild) throws NoSuchAlgorithmException, KeyManagementException {
-        final TrustManager[] trustAllCerts = new TrustManager[] {
-                new X509TrustManager() {
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return new X509Certificate[0];
-                    }
-                    @Override
-                    public void checkServerTrusted(final X509Certificate[] chain, final String authType) {}
-                    @Override
-                    public void checkClientTrusted(final X509Certificate[] chain, final String authType) {}
-                }
-        };
-        SSLContext sslContext = SSLContext.getInstance("SSL");
-        sslContext.init(null, trustAllCerts, new SecureRandom());
-        reBuild.sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0]);
-
-        HostnameVerifier hostnameVerifier = (hostname, session) -> {
-            LOGGER.log(Level.FINE, "THIS IS INSECURE - Blindly trusting host for SSL session: " + hostname);
-            return true;
-        };
-        reBuild.hostnameVerifier(hostnameVerifier);
     }
 }
