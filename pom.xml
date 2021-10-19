@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.18</version>
+    <version>4.29</version>
     <relativePath />
   </parent>
   
@@ -26,7 +26,7 @@
     <revision>3.14.10</revision>
     <changelist>-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-    <jenkins.version>2.164.3</jenkins.version>
+    <jenkins.version>2.222.4</jenkins.version>
     <java.level>8</java.level>
     <no-test-jar>false</no-test-jar>
     <okhttp3.version>3.14.9</okhttp3.version>
@@ -54,13 +54,17 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.114</version>
+      <version>1.133</version>
       <scope>test</scope>
       <exclusions>
         <!-- Provided by Jenkins -->
         <exclusion>
           <groupId>org.apache.commons</groupId>
           <artifactId>commons-lang3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
