@@ -1,6 +1,7 @@
 package io.jenkins.jenkins.plugins.okhttp.api;
 
 import hudson.ProxyConfiguration;
+import hudson.util.Secret;
 import jenkins.model.Jenkins;
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
@@ -43,15 +44,29 @@ public class JenkinsOkHttpClient {
         OkHttpClient.Builder reBuild = httpClient.newBuilder();
         if (Jenkins.get().proxy != null) {
             final ProxyConfiguration proxy = Jenkins.get().proxy;
-            Proxy proxyServer = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy.name, proxy.port));
+            final Proxy proxyServer = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxy.name, proxy.port));
+
             if (proxy.getUserName() != null) {
-                Authenticator proxyAuthenticator = new Authenticator() {
-                    @Override public Request authenticate(Route route, Response response) throws IOException {
-                        String credential = Credentials.basic(proxy.getUserName(), proxy.getPassword());
-                        return response.request().newBuilder()
-                                       .header("Proxy-Authorization", credential)
-                                       .build();
+                final Authenticator proxyAuthenticator = (route, response) -> {
+                    if (response.request().header("Proxy-Authorization") != null) {
+                        // If the header is not null, it means an authentication attempt failed. So giving up
+                        return null;
                     }
+
+                    final String proxyAuthenticateHeader = response.header("Proxy-Authenticate");
+                    if (proxyAuthenticateHeader != null) {
+                        if (proxyAuthenticateHeader.startsWith("Basic")) {
+                            final String credential = Credentials.basic(proxy.getUserName(), Secret.toString(proxy.getSecretPassword()));
+                            return response.request().newBuilder()
+                                           .header("Proxy-Authorization", credential)
+                                           .build();
+                        } else {
+                            LOGGER.warning("The proxy authentication scheme is not supported: " + proxyAuthenticateHeader);
+                        }
+                    }
+
+                    // Proxy does not support authentication or unsupported scheme so returning the request as is.
+                    return response.request().newBuilder().build();
                 };
                 reBuild.proxyAuthenticator(proxyAuthenticator);
             }
