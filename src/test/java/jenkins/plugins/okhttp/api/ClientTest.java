@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import hudson.ProxyConfiguration;
 import io.jenkins.jenkins.plugins.okhttp.api.JenkinsOkHttpClient;
 import io.jenkins.jenkins.plugins.okhttp.api.OkHttpFuture;
+import io.jenkins.jenkins.plugins.okhttp.api.OkHttpFutureException;
 import io.jenkins.jenkins.plugins.okhttp.api.internals.JenkinsProxySelector;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,7 +23,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -35,6 +35,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class ClientTest {
@@ -50,6 +51,27 @@ public class ClientTest {
             .dynamicPort()
             .dynamicHttpsPort());
 
+    /**
+     * Indicates {@link #proxy} is secured and requires authentication.
+     *
+     * @param authorizedUserPass "userName:password" style authorized users.
+     */
+    private void secureProxy(final String... authorizedUserPass) {
+        proxy.stubFor(WireMock.get(WireMock.anyUrl())
+                .willReturn(aResponse()
+                        .withStatus(407) // 407: Proxy Authentication Required
+                        .withHeader("Proxy-Authenticate", "Basic")));
+
+        if (authorizedUserPass != null) {
+            for (String userPass : authorizedUserPass) {
+                final String basicAuthenticationHeaderValue = "Basic " + Base64.getEncoder().encodeToString(userPass.getBytes(StandardCharsets.UTF_8));
+                proxy.stubFor(WireMock.get(WireMock.anyUrl())
+                        .withHeader("Proxy-Authorization", WireMock.equalTo(basicAuthenticationHeaderValue))
+                        .willReturn(WireMock.ok("Hello from proxy")));
+            }
+        }
+    }
+
     @Test
     public void testHappyPath() throws ExecutionException, InterruptedException {
         server.stubFor(
@@ -61,8 +83,7 @@ public class ClientTest {
                 .build();
         final Request request = new Request.Builder().get().url(server.baseUrl()).build();
 
-        final OkHttpFuture<Response> future = new OkHttpFuture<>(client.newCall(request), (call, response) -> response);
-        final Response response = future.get();
+        final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
 
         assertTrue("Request to " + request.url() + " isn't successful", response.isSuccessful());
     }
@@ -74,10 +95,10 @@ public class ClientTest {
                 .build();
         final Request request = new Request.Builder().get().url("https://jenkins.io-does-not-exist").build();
 
-        Optional<Response> futureResponse = new OkHttpFuture<>(client.newCall(request), (call, response) -> Optional.of(response))
-                .exceptionally(ex -> Optional.empty())
+        final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE)
+                .exceptionally(ex -> null)
                 .get();
-        assertFalse("A response was sent while none was expected due to calling a non existing URL", futureResponse.isPresent());
+        assertNull("A response was sent while none was expected due to calling a non existing URL", response);
     }
 
     @Test
@@ -91,11 +112,11 @@ public class ClientTest {
                 .build();
         final Request request = new Request.Builder().get().url(server.baseUrl()).build();
 
-        CompletableFuture<Optional<Response>> futureResponse = new OkHttpFuture<>(client.newCall(request), (call, response) -> Optional.of(response))
-                .exceptionally(ex -> Optional.empty());
+        CompletableFuture<Boolean> result = new OkHttpFuture<>(client.newCall(request), (call, response) -> true)
+                .exceptionally(ex -> false);
 
-        final CompletableFuture<Optional<String>> listener1 = futureResponse.thenApply(response -> Optional.of("Listener 1 OK"));
-        final CompletableFuture<Optional<String>> listener2 = futureResponse.thenApply(response -> Optional.of("Listener 2 OK"));
+        final CompletableFuture<Optional<String>> listener1 = result.thenApply(response -> Optional.of("Listener 1 OK"));
+        final CompletableFuture<Optional<String>> listener2 = result.thenApply(response -> Optional.of("Listener 2 OK"));
 
         assertEquals("Listener 1 OK", listener1.get().get());
         assertEquals("Listener 2 OK", listener2.get().get());
@@ -119,29 +140,10 @@ public class ClientTest {
         final Optional<Throwable> response = future.get();
 
         assertTrue(response.isPresent());
-        assertEquals(SocketTimeoutException.class, response.get().getClass());
+        assertEquals(OkHttpFutureException.class, response.get().getClass());
+        assertEquals(SocketTimeoutException.class, response.get().getCause().getClass());
     }
 
-    /**
-     * Indicates {@link #proxy} is secured and requires authentication.
-     *
-     * @param authorizedUserPass "userName:password" style authorized users.
-     */
-    private void secureProxy(final String ... authorizedUserPass) {
-        proxy.stubFor(WireMock.get(WireMock.anyUrl())
-                .willReturn(aResponse()
-                        .withStatus(407) // 407: Proxy Authentication Required
-                        .withHeader("Proxy-Authenticate", "Basic")));
-
-        if (authorizedUserPass != null) {
-            for (String userPass : authorizedUserPass) {
-                final String basicAuthenticationHeaderValue = "Basic " + Base64.getEncoder().encodeToString(userPass.getBytes(StandardCharsets.UTF_8));
-                proxy.stubFor(WireMock.get(WireMock.anyUrl())
-                        .withHeader("Proxy-Authorization", WireMock.equalTo(basicAuthenticationHeaderValue))
-                        .willReturn(WireMock.ok("Hello from proxy")));
-            }
-        }
-    }
 
     @Test
     public void testProxy() throws ExecutionException, InterruptedException, IOException {
@@ -153,13 +155,10 @@ public class ClientTest {
                 .build();
         final Request request = new Request.Builder().get().url(server.url("/hello")).build();
 
-        final CompletableFuture<Optional<Response>> future = new OkHttpFuture<>(client.newCall(request), (call, response) -> Optional.of(response));
+        final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
 
-        final Optional<Response> response = future.get();
-
-        assertTrue(response.isPresent());
-        assertEquals(200, response.get().code());
-        try (final ResponseBody body = response.get().body()) {
+        assertEquals(200, response.code());
+        try (final ResponseBody body = response.body()) {
             assertEquals("Hello from proxy", body.string());
         }
     }
@@ -184,7 +183,7 @@ public class ClientTest {
 
         for (final URI uri : urisThatShouldNotUseProxy) {
             final List<Proxy> proxies = proxySelector.select(uri);
-            assertEquals("Not only one proxy returned for URI " + uri,1, proxies.size());
+            assertEquals("Not only one proxy returned for URI " + uri, 1, proxies.size());
             assertEquals("A proxy different from NO_PROXY is sent for " + uri, Proxy.NO_PROXY, proxies.get(0));
         }
     }
