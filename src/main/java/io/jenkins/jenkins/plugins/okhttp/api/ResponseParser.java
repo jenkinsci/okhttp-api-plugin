@@ -5,6 +5,8 @@ import okhttp3.Call;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Response parser.
@@ -13,6 +15,7 @@ import java.io.IOException;
  * @param <T> the result type of the parsing
  */
 public interface ResponseParser<T> {
+    Logger LOGGER = Logger.getLogger(ResponseParser.class.getName());
 
     /**
      * Called when the HTTP request finishes successfully and there is a response to process.
@@ -31,6 +34,7 @@ public interface ResponseParser<T> {
      * @param e    the exception causing the failure
      */
     default void onFailure(Call call, IOException e) {
+        LOGGER.log(Level.WARNING, "A failure occurred", e);
     }
 }
 
