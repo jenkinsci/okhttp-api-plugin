@@ -2,6 +2,7 @@ package io.jenkins.plugins.okhttp.api.internals;
 
 import com.burgstaller.okhttp.digest.DigestAuthenticator;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.ProxyConfiguration;
 import hudson.util.Secret;
 import okhttp3.Authenticator;
@@ -23,6 +24,7 @@ public class JenkinsProxyAuthenticator implements Authenticator {
 
     @Nullable
     @Override
+    @SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION", justification = "Prefer SpotBugs @Nullable")
     public Request authenticate(@Nullable Route route, Response response) throws IOException {
         if (response.request().header("Proxy-Authorization") != null) {
             // If the header is not null, it means an authentication attempt failed. So giving up
