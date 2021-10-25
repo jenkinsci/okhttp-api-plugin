@@ -1,12 +1,13 @@
 package jenkins.plugins.okhttp.api;
 
+import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import hudson.ProxyConfiguration;
-import io.jenkins.jenkins.plugins.okhttp.api.JenkinsOkHttpClient;
-import io.jenkins.jenkins.plugins.okhttp.api.OkHttpFuture;
-import io.jenkins.jenkins.plugins.okhttp.api.OkHttpFutureException;
-import io.jenkins.jenkins.plugins.okhttp.api.internals.JenkinsProxySelector;
+import io.jenkins.plugins.okhttp.api.JenkinsOkHttpClient;
+import io.jenkins.plugins.okhttp.api.OkHttpFuture;
+import io.jenkins.plugins.okhttp.api.OkHttpFutureException;
+import io.jenkins.plugins.okhttp.api.internals.JenkinsProxySelector;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -34,7 +35,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -54,19 +54,20 @@ public class ClientTest {
     /**
      * Indicates {@link #proxy} is secured and requires authentication.
      *
+     * @param authenticationType "Basic", "Digest", ...
      * @param authorizedUserPass "userName:password" style authorized users.
      */
-    private void secureProxy(final String... authorizedUserPass) {
+    private void secureProxy(String authenticationType, final String... authorizedUserPass) {
         proxy.stubFor(WireMock.get(WireMock.anyUrl())
                 .willReturn(aResponse()
                         .withStatus(407) // 407: Proxy Authentication Required
-                        .withHeader("Proxy-Authenticate", "Basic")));
+                        .withHeader("Proxy-Authenticate", authenticationType)));
 
-        if (authorizedUserPass != null) {
+        if (authorizedUserPass != null && "Basic".equals(authenticationType)) {
             for (String userPass : authorizedUserPass) {
-                final String basicAuthenticationHeaderValue = "Basic " + Base64.getEncoder().encodeToString(userPass.getBytes(StandardCharsets.UTF_8));
-                proxy.stubFor(WireMock.get(WireMock.anyUrl())
-                        .withHeader("Proxy-Authorization", WireMock.equalTo(basicAuthenticationHeaderValue))
+                final String authenticationHeaderValue = "Basic " + Base64.getEncoder().encodeToString(userPass.getBytes(StandardCharsets.UTF_8));
+                proxy.stubFor(get(WireMock.anyUrl())
+                        .withHeader("Proxy-Authorization", WireMock.equalTo(authenticationHeaderValue))
                         .willReturn(WireMock.ok("Hello from proxy")));
             }
         }
@@ -148,7 +149,7 @@ public class ClientTest {
     @Test
     public void testProxy() throws ExecutionException, InterruptedException, IOException {
         jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), "proxy-user", "proxy-pass"));
-        secureProxy("proxy-user:proxy-pass");
+        secureProxy("Basic", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
         final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient())

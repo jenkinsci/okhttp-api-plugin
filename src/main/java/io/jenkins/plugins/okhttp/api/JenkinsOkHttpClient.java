@@ -1,8 +1,8 @@
-package io.jenkins.jenkins.plugins.okhttp.api;
+package io.jenkins.plugins.okhttp.api;
 
 import hudson.ProxyConfiguration;
-import io.jenkins.jenkins.plugins.okhttp.api.internals.JenkinsProxyAuthenticator;
-import io.jenkins.jenkins.plugins.okhttp.api.internals.JenkinsProxySelector;
+import io.jenkins.plugins.okhttp.api.internals.JenkinsProxyAuthenticator;
+import io.jenkins.plugins.okhttp.api.internals.JenkinsProxySelector;
 import jenkins.model.Jenkins;
 import okhttp3.OkHttpClient;
 

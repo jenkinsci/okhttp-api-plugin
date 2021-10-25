@@ -1,4 +1,4 @@
-package io.jenkins.jenkins.plugins.okhttp.api.internals;
+package io.jenkins.plugins.okhttp.api.internals;
 
 import hudson.ProxyConfiguration;
 

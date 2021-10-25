@@ -1,5 +1,7 @@
-package io.jenkins.jenkins.plugins.okhttp.api.internals;
+package io.jenkins.plugins.okhttp.api.internals;
 
+import com.burgstaller.okhttp.digest.DigestAuthenticator;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.ProxyConfiguration;
 import hudson.util.Secret;
 import okhttp3.Authenticator;
@@ -8,7 +10,6 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.logging.Logger;
 
@@ -35,12 +36,14 @@ public class JenkinsProxyAuthenticator implements Authenticator {
                 return response.request().newBuilder()
                         .header("Proxy-Authorization", credential)
                         .build();
+            } else if (proxyAuthenticateHeader.startsWith("Digest")) {
+                final com.burgstaller.okhttp.digest.Credentials credentials = new com.burgstaller.okhttp.digest.Credentials(proxy.getUserName(), Secret.toString(proxy.getSecretPassword()));
+                return new DigestAuthenticator(credentials).authenticate(route, response);
             } else {
                 LOGGER.warning("The proxy authentication scheme is not supported: " + proxyAuthenticateHeader);
             }
         }
 
-        // Proxy does not support authentication or unsupported scheme so returning the request as is.
-        return response.request().newBuilder().build();
+        return null;
     }
 }
