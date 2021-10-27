@@ -1,6 +1,8 @@
 package io.jenkins.plugins.okhttp.api.internals;
 
 import hudson.ProxyConfiguration;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+@Restricted(NoExternalUse.class)
 public class JenkinsProxySelector extends ProxySelector {
     private static final Logger LOGGER = Logger.getLogger(JenkinsProxySelector.class.getName());
     private final ProxyConfiguration configuration;

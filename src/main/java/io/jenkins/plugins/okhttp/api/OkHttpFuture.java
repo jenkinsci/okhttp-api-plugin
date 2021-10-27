@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * Provides an asynchronous-like mechanism to OkHttp to get a response in an asynchronous way.
+ * Provides a mechanism to transform an HTTP response asynchronously relying only on JDK APIs.
  *
  * @param <T> Type returned when a {@link Response} is get.
  */

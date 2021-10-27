@@ -9,10 +9,13 @@ import okhttp3.Credentials;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.Route;
+import org.kohsuke.accmod.Restricted;
+import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import java.io.IOException;
 import java.util.logging.Logger;
 
+@Restricted(NoExternalUse.class)
 public class JenkinsProxyAuthenticator implements Authenticator {
     private static final Logger LOGGER = Logger.getLogger(JenkinsProxyAuthenticator.class.getName());
     private final ProxyConfiguration proxy;
