@@ -17,7 +17,7 @@
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>okhttp-api</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>3.14.9-20211029</version>
   <packaging>hpi</packaging>
   <name>OkHttp Plugin</name>
   <url>https://github.com/jenkinsci/okhttp-api-plugin</url>
@@ -96,6 +96,6 @@
     <connection>scm:git:git://github.com/${gitHubRepo}.git</connection>
     <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
     <url>https://github.com/${gitHubRepo}</url>
-    <tag>${scmTag}</tag>
+    <tag>okhttp-api-3.14.9-20211029</tag>
   </scm>
 </project>
