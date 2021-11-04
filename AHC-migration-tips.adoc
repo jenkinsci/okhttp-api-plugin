@@ -1,0 +1,46 @@
+# async-http-client to okhttp migration tips
+
+## Use the okhttp-api utility classes
+
+`JenkinsOKHttpClient`
+
+Use this class to instantiate an `OkHttpClient.Builder` that already has the Jenkins proxy configuration pre-set. It does not update the configuration, so if you want to get any change on Jenkins proxy (if there was some since the client was firstly instantiated) reflected in your client then you need to call `newClientBuilder` again passing the existing client.
+
+As noted in the link:https://square.github.io/okhttp/4.x/okhttp/okhttp3/-ok-http-client/#customize-your-client-with-newbuilder[documentation], new clients coming from the builder share most of the resources, so there is no need to keep the same client as a singleton (normally).
+
+Replace `RequestBuilder` with `OkHttpClient.Builder`.
+Replace `Realm` with `Authenticator`:
+
+```
+public RequestBuilder authenticate(RequestBuilder builder) {
+    return builder.setRealm(realm);
+}
+```
+
+Becomes:
+
+```
+public OkHttpClient.Builder authenticate(OkHttpClient.Builder builder) {
+    return builder.authenticator(authScheme);
+}
+```
+
+## Adapter to Java Future API
+
+Most of the usages of the AHC library are tied to the Java Future API, so it’s very convenient to keep the interfaces untouched while changing the implementation. To do this the okhttp-api plugin provides the `OkHttpFuture` class, which is an adapter from the native okhttp async API to the Java Future API. So you can do something like this:
+
+```
+return new OkHttpFuture<T>(call, new ResponseConverter<T>() {
+    @Override
+    public T onResponse(Call call, Response response) throws IOException {
+        // handle the response        
+    }
+
+    @Override
+    public void onFailure(Call call, IOException e) {
+        // handle the failure
+    }
+);
+```
+
+
