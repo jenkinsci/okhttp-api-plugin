@@ -1,9 +1,10 @@
+<!-- do_not_remove: published-with-gradle-metadata -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.29</version>
+    <version>4.31</version>
     <relativePath />
   </parent>
   
@@ -33,6 +34,18 @@
     <okio.version>2.10.0</okio.version>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp-bom</artifactId>
+        <version>${okhttp3.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <!-- Okio versions separate from okhttp and we want to pull in later versions -->
     <dependency>
@@ -43,12 +56,10 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>okhttp</artifactId>
-      <version>${okhttp3.version}</version>
     </dependency>
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>logging-interceptor</artifactId>
-      <version>${okhttp3.version}</version>
     </dependency>
     <!-- Use github-api to test that okhttp dependency not completely broken -->
     <dependency>
@@ -98,4 +109,30 @@
     <url>https://github.com/${gitHubRepo}</url>
     <tag>${scmTag}</tag>
   </scm>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>de.jjohannes</groupId>
+        <artifactId>gradle-module-metadata-maven-plugin</artifactId>
+        <version>0.2.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>gmm</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <platformDependencies>
+            <dependency>
+              <groupId>com.squareup.okhttp3</groupId>
+              <artifactId>okhttp-bom</artifactId>
+              <version>${okhttp3.version}</version>
+            </dependency>
+          </platformDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
