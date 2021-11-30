@@ -27,7 +27,7 @@ This plugin **does not** include the following packages:
   so there is no reason to include this package.
   Plugins that use `OkHttpUrlFactory` and want to use this plugin are strongly advised to upgrade to OkHttp's request/response API directly.
   If that is not feasible, they can copy and paste 
-  link:https://gist.github.com/swankjesse/dd91c0a8854e1559b00f5fc9c7bfae70[ObsoleteUrlFactory.java] into their project.
+  link:https://github.com/hub4j/github-api/blob/b33e9345562d7e58d0238902df6a0ba9f0fb7a69/src/main/java/org/kohsuke/github/extras/okhttp3/ObsoleteUrlFactory.java[ObsoleteUrlFactory.java] into their project.
 
 ## Migration from `async-http-client` tips
 
@@ -97,14 +97,10 @@ The plugins are grouped based which version and packages they bundle.
 
 ### okhttp 4.x
 
-*Moderate to low risk*
+*low risk*
 
-link:https://square.github.io/okhttp/upgrading_to_okhttp_4/[With a few small exceptions], 
-OkHttp 4.x is both binary- and Java source-compatible with OkHttp 3.x. 
-You can use an OkHttp 4.x .jar file with applications or libraries built for OkHttp 3.x. 
-However, plugins that use OkHttp 4.x may depend on features not present in OkHttp 3.x.
-
-Thus updating these plugins to use `okhttp-api-plugin` is currently moderate risk.  This will become low risk once `okhttp-api-plugin` is updated to a relatively recent 4.x version. 
+The `okhttp-api-plugin` has updated to the 4.x release line.
+This means updating these plugins to use `okhttp-api-plugin` has very low risk. 
 
 ```
 defensics: okhttp-4.6.0.jar
@@ -120,6 +116,7 @@ worktile: okhttp-4.5.0.jar
 *Low risk* 
 
 okhttp 3.x (aka okhttp3 v3.x) has strong api stability across its lifetime. 
+Most 3.x APIs remain unchanged in 4.x.
 
 ```
 BlazeMeterJenkinsPlugin: okhttp-3.6.0.jar
@@ -193,7 +190,10 @@ yet-another-docker-plugin: docker-java-transport-okhttp-3.2.0.jar
 
 Support for `okhttp-urlconnection` was dropped in 3.14.x and later.
 It only valid in 3.12.x and earlier. 
-See the release notes for 3.14.0: https://square.github.io/okhttp/changelog_3x/#version-3140 for temporary helper class workaround.
+
+Plugins that use `OkHttpUrlFactory` are strongly advised to upgrade to OkHttp's request/response API directly.
+If that is not feasible, they can copy and paste 
+link:https://github.com/hub4j/github-api/blob/b33e9345562d7e58d0238902df6a0ba9f0fb7a69/src/main/java/org/kohsuke/github/extras/okhttp3/ObsoleteUrlFactory.java[ObsoleteUrlFactory.java] into their project.
 
 ```
 azure-acs: okhttp-urlconnection-3.11.0.jar
@@ -213,6 +213,8 @@ azure-container-registry-tasks: okhttp-urlconnection-3.11.0.jar
 azure-credentials-ext: okhttp-3.12.6.jar
 azure-credentials: okhttp-3.12.6.jar
 azure-credentials: okhttp-urlconnection-3.12.2.jar
+azure-dev-spaces: okhttp-3.12.12.jar
+azure-dev-spaces: okhttp-ws-2.7.5.jar
 azure-function: okhttp-3.4.2.jar
 azure-function: okhttp-urlconnection-3.4.2.jar
 azure-iot-edge: okhttp-3.4.2.jar
@@ -221,8 +223,6 @@ azure-vm-agents: okhttp-3.4.2.jar
 azure-vm-agents: okhttp-urlconnection-3.4.2.jar
 azure-vmss: okhttp-3.14.7.jar
 azure-vmss: okhttp-urlconnection-3.4.2.jar
-okhttp-api: okhttp-3.12.12.jar
-okhttp-api: okhttp-urlconnection-3.12.12.jar
 service-fabric: okhttp-3.4.2.jar
 service-fabric: okhttp-urlconnection-3.4.2.jar
 upload-pgyer: okhttp-3.10.0.jar
@@ -246,16 +246,12 @@ alauda-devops-pipeline: okhttp-2.7.5.jar
 alauda-devops-sync: okhttp-2.7.5.jar
 alauda-kubernetes-support: okhttp-ws-2.7.5.jar
 alauda-kubernetes-support: okhttp-2.7.5.jar
-azure-dev-spaces: okhttp-2.7.5.jar
-azure-dev-spaces: okhttp-ws-2.7.5.jar
 bitbucket-approve: okhttp-2.1.0.jar
 coding-webhook: okhttp-urlconnection-2.5.0.jar
 coding-webhook: okhttp-2.5.0.jar
 fortify: okhttp-2.7.5.jar
 frugal-testing: okhttp-2.7.5.jar
 git-changelog: okhttp-2.7.5.jar
-github: okhttp-2.7.5.jar
-github: okhttp-urlconnection-2.7.5.jar
 http-post: okhttp-2.1.0.jar
 incapptic-connect-uploader: okhttp-2.7.5.jar
 jclouds-jenkins: jclouds-okhttp-2.2.0.jar
