@@ -14,6 +14,7 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 @Restricted(NoExternalUse.class)
@@ -50,7 +51,7 @@ public class JenkinsProxyAuthenticator implements Authenticator {
     }
 
     private boolean isAuthenticationSchemeSupported(@NonNull final String proxyAuthenticateHeader) {
-        final String lowerCaseHeader = proxyAuthenticateHeader.toLowerCase();
+        final String lowerCaseHeader = proxyAuthenticateHeader.toLowerCase(Locale.ROOT);
 
         /* According https://square.github.io/okhttp/4.x/okhttp/okhttp3/-authenticator/ :
 
@@ -60,6 +61,6 @@ public class JenkinsProxyAuthenticator implements Authenticator {
 
            That is why we check for the OkHttp-Preemptive header.
          */
-        return lowerCaseHeader.startsWith("basic") || lowerCaseHeader.equalsIgnoreCase("okhttp-preemptive");
+        return lowerCaseHeader.startsWith("basic") || lowerCaseHeader.equals("okhttp-preemptive");
     }
 }

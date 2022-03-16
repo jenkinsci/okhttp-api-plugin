@@ -171,8 +171,7 @@ public class ClientTest {
         secureProxy("Basic realm=\"somerealm\"", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
-        final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient())
-                .build();
+        final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient()).build();
         final Request request = new Request.Builder().get().url(server.url("/hello")).build();
 
         final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
@@ -189,8 +188,7 @@ public class ClientTest {
         secureProxy("OkHttp-Preemptive", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
-        final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient())
-                .build();
+        final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient()).build();
         final Request request = new Request.Builder().get().url(server.url("/hello")).build();
 
         final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
