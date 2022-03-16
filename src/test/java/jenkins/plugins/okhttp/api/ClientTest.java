@@ -1,6 +1,5 @@
 package jenkins.plugins.okhttp.api;
 
-import com.github.tomakehurst.wiremock.client.MappingBuilder;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import hudson.ProxyConfiguration;
@@ -63,12 +62,14 @@ public class ClientTest {
                         .withStatus(407) // 407: Proxy Authentication Required
                         .withHeader("Proxy-Authenticate", authenticationType)));
 
-        if (authorizedUserPass != null && "Basic".equals(authenticationType)) {
-            for (String userPass : authorizedUserPass) {
-                final String authenticationHeaderValue = "Basic " + Base64.getEncoder().encodeToString(userPass.getBytes(StandardCharsets.UTF_8));
-                proxy.stubFor(get(WireMock.anyUrl())
-                        .withHeader("Proxy-Authorization", WireMock.equalTo(authenticationHeaderValue))
-                        .willReturn(WireMock.ok("Hello from proxy")));
+        if (authorizedUserPass != null && authenticationType != null) {
+            if (authenticationType.toLowerCase().contains("basic") || authenticationType.equalsIgnoreCase("okhttp-preemptive")) {
+                for (String userPass : authorizedUserPass) {
+                    final String authenticationHeaderValue = "Basic " + Base64.getEncoder().encodeToString(userPass.getBytes(StandardCharsets.UTF_8));
+                    proxy.stubFor(get(WireMock.anyUrl())
+                            .withHeader("Proxy-Authorization", WireMock.equalTo(authenticationHeaderValue))
+                            .willReturn(WireMock.ok("Hello from proxy")));
+                }
             }
         }
     }
@@ -150,6 +151,42 @@ public class ClientTest {
     public void testProxy() throws ExecutionException, InterruptedException, IOException {
         jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), "proxy-user", "proxy-pass"));
         secureProxy("Basic", "proxy-user:proxy-pass");
+        server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
+
+        final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient())
+                .build();
+        final Request request = new Request.Builder().get().url(server.url("/hello")).build();
+
+        final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
+
+        assertEquals(200, response.code());
+        try (final ResponseBody body = response.body()) {
+            assertEquals("Hello from proxy", body.string());
+        }
+    }
+
+    @Test
+    public void testProxyWithBasicAuthAndRealm() throws ExecutionException, InterruptedException, IOException {
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), "proxy-user", "proxy-pass"));
+        secureProxy("Basic realm=\"somerealm\"", "proxy-user:proxy-pass");
+        server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
+
+        final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient())
+                .build();
+        final Request request = new Request.Builder().get().url(server.url("/hello")).build();
+
+        final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
+
+        assertEquals(200, response.code());
+        try (final ResponseBody body = response.body()) {
+            assertEquals("Hello from proxy", body.string());
+        }
+    }
+
+    @Test
+    public void testProxyWithPreemptiveAuth() throws ExecutionException, InterruptedException, IOException {
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), "proxy-user", "proxy-pass"));
+        secureProxy("OkHttp-Preemptive", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
         final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient())
