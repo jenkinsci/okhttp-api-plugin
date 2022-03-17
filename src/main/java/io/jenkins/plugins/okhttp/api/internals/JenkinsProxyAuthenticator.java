@@ -52,15 +52,6 @@ public class JenkinsProxyAuthenticator implements Authenticator {
 
     private boolean isAuthenticationSchemeSupported(@NonNull final String proxyAuthenticateHeader) {
         final String lowerCaseHeader = proxyAuthenticateHeader.toLowerCase(Locale.ROOT);
-
-        /* According https://square.github.io/okhttp/4.x/okhttp/okhttp3/-authenticator/ :
-
-             | OkHttp will call authenticate with a fake HTTP/1.1 407 Proxy Authentication Required response that has a
-             | Proxy-Authenticate: OkHttp-Preemptive challenge. The proxy authenticator may return either an
-             | authenticated request, or null to connect without authentication.
-
-           That is why we check for the OkHttp-Preemptive header.
-         */
-        return lowerCaseHeader.startsWith("basic") || lowerCaseHeader.equals("okhttp-preemptive");
+        return lowerCaseHeader.startsWith("basic");
     }
 }

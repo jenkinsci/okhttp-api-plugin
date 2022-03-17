@@ -183,23 +183,6 @@ public class ClientTest {
     }
 
     @Test
-    public void testProxyWithPreemptiveAuth() throws ExecutionException, InterruptedException, IOException {
-        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), "proxy-user", "proxy-pass"));
-        secureProxy("OkHttp-Preemptive", "proxy-user:proxy-pass");
-        server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
-
-        final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient()).build();
-        final Request request = new Request.Builder().get().url(server.url("/hello")).build();
-
-        final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
-
-        assertEquals(200, response.code());
-        try (final ResponseBody body = response.body()) {
-            assertEquals("Hello from proxy", body.string());
-        }
-    }
-
-    @Test
     public void testProxySelector() throws URISyntaxException {
         final String noProxyHosts = new StringJoiner("|")
                 .add("1.2.3.4")
