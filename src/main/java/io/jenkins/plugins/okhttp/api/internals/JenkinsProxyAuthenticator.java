@@ -51,7 +51,6 @@ public class JenkinsProxyAuthenticator implements Authenticator {
     }
 
     private boolean isAuthenticationSchemeSupported(@NonNull final String proxyAuthenticateHeader) {
-        final String lowerCaseHeader = proxyAuthenticateHeader.toLowerCase(Locale.ROOT);
-        return lowerCaseHeader.startsWith("basic");
+        return proxyAuthenticateHeader.toLowerCase(Locale.ROOT).startsWith("basic");
     }
 }
