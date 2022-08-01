@@ -29,7 +29,7 @@
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <jenkins.version>2.289.1</jenkins.version>
     <no-test-jar>false</no-test-jar>
-    <okio.version>2.10.0</okio.version>
+    <okio.version>3.2.0</okio.version>
   </properties>
 
   <dependencyManagement>
