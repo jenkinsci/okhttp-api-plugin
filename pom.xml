@@ -29,7 +29,7 @@
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <jenkins.version>2.289.1</jenkins.version>
     <no-test-jar>false</no-test-jar>
-    <okio.version>2.10.0</okio.version>
+    <okio.version>3.3.0</okio.version>
   </properties>
 
   <dependencyManagement>
@@ -45,6 +45,11 @@
   </dependencyManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+      <version>1.8.10</version>
+    </dependency>
     <!-- Okio versions separate from okhttp and we want to pull in later versions -->
     <dependency>
       <groupId>com.squareup.okio</groupId>
@@ -58,6 +63,7 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>logging-interceptor</artifactId>
+      <version>5.0.0-alpha.11</version>
     </dependency>
     <!-- Use github-api to test that okhttp dependency not completely broken -->
     <dependency>
