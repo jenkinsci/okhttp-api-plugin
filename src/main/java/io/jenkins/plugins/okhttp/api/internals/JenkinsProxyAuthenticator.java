@@ -1,5 +1,6 @@
 package io.jenkins.plugins.okhttp.api.internals;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.ProxyConfiguration;
@@ -13,6 +14,7 @@ import org.kohsuke.accmod.Restricted;
 import org.kohsuke.accmod.restrictions.NoExternalUse;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 @Restricted(NoExternalUse.class)
@@ -35,7 +37,7 @@ public class JenkinsProxyAuthenticator implements Authenticator {
 
         final String proxyAuthenticateHeader = response.header("Proxy-Authenticate");
         if (proxyAuthenticateHeader != null) {
-            if (proxyAuthenticateHeader.startsWith("Basic")) {
+            if (isAuthenticationSchemeSupported(proxyAuthenticateHeader)) {
                 final String credential = Credentials.basic(proxy.getUserName(), Secret.toString(proxy.getSecretPassword()));
                 return response.request().newBuilder()
                         .header("Proxy-Authorization", credential)
@@ -46,5 +48,9 @@ public class JenkinsProxyAuthenticator implements Authenticator {
         }
 
         return null;
+    }
+
+    private boolean isAuthenticationSchemeSupported(@NonNull final String proxyAuthenticateHeader) {
+        return proxyAuthenticateHeader.toLowerCase(Locale.ROOT).startsWith("basic");
     }
 }
