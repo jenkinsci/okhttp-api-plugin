@@ -73,7 +73,6 @@
     <dependency>
       <groupId>com.squareup.okhttp3</groupId>
       <artifactId>logging-interceptor</artifactId>
-      <version>5.0.0-alpha.11</version>
     </dependency>
     <!-- Use github-api to test that okhttp dependency not completely broken -->
     <dependency>
