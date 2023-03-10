@@ -30,6 +30,10 @@
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <jenkins.version>2.361.4</jenkins.version>
     <no-test-jar>false</no-test-jar>
+    <!-- 
+      beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
+      if updating these ensure the used transitive deps that have their version managed are updated as direct dependencies and any unused ones are removed.
+    -->
     <okio.version>3.3.0</okio.version>
     <kotlin.version>1.8.10</kotlin.version>
   </properties>
@@ -99,6 +103,34 @@
       <version>2.35.0</version>
       <scope>test</scope>
     </dependency>
+
+    <!-- inline used transitive okhttp dependencies -->
+    <!-- no extra transitive deps used -->
+    <!-- inline used transitive okio dependencies -->
+    <!-- com.squareup.okio:okio-jvm is a transitive dep but does not have its version managed -->
+    <!-- inline used transitive kotlin dependencies -->
+    <dependency>
+      <groupId>org.jetbrains</groupId>
+      <artifactId>annotations</artifactId>
+      <version>13.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-common</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlin</groupId>
+      <artifactId>kotlin-stdlib-jdk7</artifactId>
+    </dependency>
+
   </dependencies>
 
   <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
