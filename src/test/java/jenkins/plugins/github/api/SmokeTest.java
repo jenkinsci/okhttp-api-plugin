@@ -20,7 +20,7 @@ import org.kohsuke.github.GitHubBuilder;
 import org.kohsuke.github.HttpConnector;
 import org.kohsuke.github.extras.okhttp3.OkHttpConnector;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
@@ -41,7 +41,7 @@ public class SmokeTest {
         GitHub apply(MockGitHub t) throws IOException;
     }
 
-    @Nonnull
+    @NonNull
     IOFunction connectFunction;
 
     public SmokeTest(IOFunction connectFunction) {
