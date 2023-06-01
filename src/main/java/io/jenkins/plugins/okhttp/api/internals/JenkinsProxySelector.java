@@ -25,7 +25,7 @@ public class JenkinsProxySelector extends ProxySelector {
 
     public JenkinsProxySelector(final ProxyConfiguration configuration) {
         this.configuration = configuration;
-        this.proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(configuration.name, configuration.port));
+        this.proxy = new Proxy(Proxy.Type.HTTP, InetSocketAddress.createUnresolved(configuration.name, configuration.port));
     }
 
     @Override
