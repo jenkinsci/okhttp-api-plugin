@@ -190,8 +190,8 @@ public class ClientTest {
                 .add("my*.super-jenkins.io")
                 .toString();
 
-        final ProxyConfiguration configuration = new ProxyConfiguration("127.0.0.1", proxy.port(), null, null, noProxyHosts);
-        final JenkinsProxySelector proxySelector = new JenkinsProxySelector(configuration);
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), null, null, noProxyHosts));
+        final JenkinsProxySelector proxySelector = new JenkinsProxySelector();
 
         final URI[] urisThatShouldNotUseProxy = {
                 new URI("http://1.2.3.4"),
