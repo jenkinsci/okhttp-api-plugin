@@ -27,7 +27,7 @@ public class JenkinsProxyAuthenticator implements Authenticator {
     @SuppressFBWarnings(value = "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION", justification = "Prefer SpotBugs @Nullable")
     public Request authenticate(@Nullable Route route, Response response) throws IOException {
 
-        ProxyConfiguration proxy = Jenkins.get().proxy;
+        ProxyConfiguration proxy = Jenkins.get().getProxy();
         if (proxy == null || proxy.getUserName() == null) {
             return null;
         }
