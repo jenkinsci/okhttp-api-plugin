@@ -28,7 +28,7 @@
     <revision>4.11.0</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-    <jenkins.version>2.387.3</jenkins.version>
+    <jenkins.version>2.401.3</jenkins.version>
     <no-test-jar>false</no-test-jar>
     <!-- 
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
@@ -40,6 +40,13 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>io.jenkins.tools.bom</groupId>
+          <artifactId>bom-2.401.x</artifactId>
+          <version>2329.v078520e55c19</version>
+          <type>pom</type>
+          <scope>import</scope>
+      </dependency>
       <dependency>
         <groupId>com.squareup.okhttp3</groupId>
         <artifactId>okhttp-bom</artifactId>
