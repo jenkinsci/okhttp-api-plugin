@@ -34,7 +34,7 @@
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
       if updating these ensure the used transitive deps that have their version managed are updated as direct dependencies and any unused ones are removed.
     -->
-    <okio.version>3.5.0</okio.version>
+    <okio.version>3.6.0</okio.version>
     <kotlin.version>1.9.0</kotlin.version>
   </properties>
 
