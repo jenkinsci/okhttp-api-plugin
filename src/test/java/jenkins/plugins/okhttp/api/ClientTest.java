@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.net.URI;
@@ -149,7 +150,7 @@ public class ClientTest {
 
     @Test
     public void testProxy() throws ExecutionException, InterruptedException, IOException {
-        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), "proxy-user", "proxy-pass"));
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration(InetAddress.getLoopbackAddress().getHostAddress(), proxy.port(), "proxy-user", "proxy-pass"));
         secureProxy("Basic", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
@@ -167,7 +168,7 @@ public class ClientTest {
 
     @Test
     public void testProxyWithBasicAuthAndRealm() throws ExecutionException, InterruptedException, IOException {
-        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), "proxy-user", "proxy-pass"));
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration(InetAddress.getLoopbackAddress().getHostAddress(), proxy.port(), "proxy-user", "proxy-pass"));
         secureProxy("Basic realm=\"somerealm\"", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
