@@ -28,7 +28,8 @@
     <revision>4.11.0</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-    <jenkins.version>2.387.3</jenkins.version>
+    <!-- TODO JENKINS-73130 https://ci.jenkins.io/job/Core/job/jenkins/job/prototype/ -->
+    <jenkins.version>2.468-rc35110.010999645350</jenkins.version>
     <no-test-jar>false</no-test-jar>
     <!-- 
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
@@ -36,6 +37,9 @@
     -->
     <okio.version>3.5.0</okio.version>
     <kotlin.version>1.9.22</kotlin.version>
+    <!-- TODO JENKINS-73339 until in parent POM -->
+    <jenkins-test-harness.version>2244.v77428109fd1f</jenkins-test-harness.version>
+    <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
   <dependencyManagement>
