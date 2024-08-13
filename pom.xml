@@ -35,7 +35,7 @@
       if updating these ensure the used transitive deps that have their version managed are updated as direct dependencies and any unused ones are removed.
     -->
     <okio.version>3.5.0</okio.version>
-    <kotlin.version>1.9.22</kotlin.version>
+    <kotlin.version>2.0.10</kotlin.version>
     <!--TODO Until is included in parent pom -->
     <maven.compiler.release>17</maven.compiler.release>
     <jenkins-test-harness.version>2250.v03a_1295b_0a_30</jenkins-test-harness.version>
