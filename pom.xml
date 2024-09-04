@@ -28,7 +28,7 @@
     <revision>4.11.0</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
-    <jenkins.version>2.472</jenkins.version>
+    <jenkins.version>2.475</jenkins.version>
     <no-test-jar>false</no-test-jar>
     <!-- 
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
@@ -36,9 +36,9 @@
     -->
     <okio.version>3.5.0</okio.version>
     <kotlin.version>1.9.22</kotlin.version>
-    <!--TODO Until is included in parent pom -->
+    <!-- TODO JENKINS-73339 until in parent POM -->
+    <jenkins-test-harness.version>2265.v3da_49c8134d6</jenkins-test-harness.version>
     <maven.compiler.release>17</maven.compiler.release>
-    <jenkins-test-harness.version>2250.v03a_1295b_0a_30</jenkins-test-harness.version>
   </properties>
 
   <dependencyManagement>
@@ -63,6 +63,12 @@
         <version>${kotlin.version}</version>
         <scope>import</scope>
         <type>pom</type>
+      </dependency>
+      <!-- TODO JENKINS-73339 until in parent POM, work around https://github.com/jenkinsci/plugin-pom/issues/936 -->
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>5.0.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
