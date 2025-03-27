@@ -9,20 +9,12 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import jakarta.servlet.ServletException;
+
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -36,28 +28,26 @@ import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.StaplerResponse2;
 
 public class MockGitHub implements Closeable {
-    private AtomicLong nextId = new AtomicLong();
-    private Map<String, MockUser> users = new HashMap<>();
-    private Map<String, MockOrganization> organizations = new HashMap<>();
+    private final AtomicLong nextId = new AtomicLong();
+    private final Map<String, MockUser> users = new HashMap<>();
+    private final Map<String, MockOrganization> organizations = new HashMap<>();
 
     private Server server;
 
     private int localPort = -1;
-    private JsonFactory factory = new JsonFactory();
+    private final JsonFactory factory = new JsonFactory();
 
     public String open() throws IOException {
         server = new Server(new ThreadPoolImpl(
-                new ThreadPoolExecutor(10, 10, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
-                        new ThreadFactory() {
-                            public Thread newThread(Runnable r) {
-                                Thread t = new Thread(r);
-                                t.setName("Jetty Thread Pool");
-                                return t;
-                            }
+                new ThreadPoolExecutor(10, 10, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(),
+                        r -> {
+                            Thread t = new Thread(r);
+                            t.setName("Jetty Thread Pool");
+                            return t;
                         })));
         ServletContextHandler context = new ServletContextHandler();
         server.setHandler(context);
-        ;
+
         context.addServlet(Stapler.class, "/*");
 
         ServerConnector connector = new ServerConnector(server);
@@ -179,7 +169,7 @@ public class MockGitHub implements Closeable {
         return new HttpResponse() {
             @Override
             public void generateResponse(StaplerRequest2 req, StaplerResponse2 rsp, Object node)
-                    throws IOException, ServletException {
+                    throws IOException {
                 List<MockRepository> repositories = new ArrayList<>();
                 for (MockOwner<?> o : owners()) {
                     for (MockRepository r: o.repositories().values()) {
@@ -188,12 +178,7 @@ public class MockGitHub implements Closeable {
                         }
                     }
                 }
-                Collections.sort(repositories, new Comparator<MockRepository>() {
-                    @Override
-                    public int compare(MockRepository o1, MockRepository o2) {
-                        return Long.compare(o1.getId(), o2.getId());
-                    }
-                });
+                repositories.sort(Comparator.comparingLong(MockObject::getId));
                 if (repositories.size() > 30) {
                     rsp.addHeader("Link", String.format(
                             "<%s/repositories?since=%d>; rel=\"next\", <%s/repositories{?since}>; rel=\"first\"",
