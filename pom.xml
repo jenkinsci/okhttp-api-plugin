@@ -31,6 +31,8 @@
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.1</jenkins.version>
+    <hpi.bundledArtifacts>kotlin-stdlib,kotlin-stdlib-common,kotlin-stdlib-jdk7,kotlin-stdlib-jdk8,logging-interceptor,okhttp,okio,okio-jvm</hpi.bundledArtifacts>
+    <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
     <no-test-jar>false</no-test-jar>
     <!-- 
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
