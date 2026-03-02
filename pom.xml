@@ -25,21 +25,21 @@
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <properties>
-    <revision>4.12.0</revision>
+    <revision>5.3.2</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
     <jenkins.baseline>2.479</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.1</jenkins.version>
-    <hpi.bundledArtifacts>kotlin-stdlib,kotlin-stdlib-common,kotlin-stdlib-jdk7,kotlin-stdlib-jdk8,logging-interceptor,okhttp,okio,okio-jvm</hpi.bundledArtifacts>
+    <hpi.bundledArtifacts>kotlin-stdlib,kotlin-stdlib-jdk7,kotlin-stdlib-jdk8,logging-interceptor,okhttp,okhttp-jvm,okio,okio-jvm</hpi.bundledArtifacts>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
     <no-test-jar>false</no-test-jar>
     <!-- 
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
       if updating these ensure the used transitive deps that have their version managed are updated as direct dependencies and any unused ones are removed.
     -->
-    <okio.version>3.6.0</okio.version>
-    <kotlin.version>1.9.22</kotlin.version>
+    <okio.version>3.16.4</okio.version>
+    <kotlin.version>2.2.21</kotlin.version>
   </properties>
 
   <dependencyManagement>
@@ -109,10 +109,6 @@
     <!-- inline used transitive okio dependencies -->
     <!-- com.squareup.okio:okio-jvm is a transitive dep but does not have its version managed -->
     <!-- inline used transitive kotlin dependencies -->
-    <dependency>
-      <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-stdlib-common</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib-jdk8</artifactId>
