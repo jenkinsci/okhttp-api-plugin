@@ -39,7 +39,7 @@
       if updating these ensure the used transitive deps that have their version managed are updated as direct dependencies and any unused ones are removed.
     -->
     <okio.version>3.16.4</okio.version>
-    <kotlin.version>2.2.21</kotlin.version>
+    <kotlin.version>2.3.10</kotlin.version>
   </properties>
 
   <dependencyManagement>
