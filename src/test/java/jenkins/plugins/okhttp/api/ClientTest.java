@@ -1,7 +1,7 @@
 package jenkins.plugins.okhttp.api;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import hudson.ProxyConfiguration;
 import io.jenkins.plugins.okhttp.api.JenkinsOkHttpClient;
 import io.jenkins.plugins.okhttp.api.OkHttpFuture;
@@ -11,16 +11,15 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.WithJenkins;
 
-import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Base64;
@@ -34,22 +33,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ClientTest {
+@WithJenkins
+class ClientTest {
 
-    @Rule
-    public JenkinsRule jenkinsRule = new JenkinsRule();
+    @RegisterExtension
+    static WireMockExtension server = WireMockExtension.newInstance().options(options().dynamicPort()).build();
 
-    @Rule
-    public WireMockRule server = new WireMockRule(options().dynamicPort());
-
-    @Rule
-    public WireMockRule proxy = new WireMockRule(options()
-            .dynamicPort()
-            .dynamicHttpsPort());
+    @RegisterExtension
+    static WireMockExtension proxy = WireMockExtension.newInstance().options(options().dynamicPort()).build();
 
     /**
      * Indicates {@link #proxy} is secured and requires authentication.
@@ -76,7 +71,7 @@ public class ClientTest {
     }
 
     @Test
-    public void testHappyPath() throws ExecutionException, InterruptedException {
+    void testHappyPath(JenkinsRule jenkinsRule) throws Exception {
         server.stubFor(
                 get("/").willReturn(ok("Hello"))
         );
@@ -88,11 +83,11 @@ public class ClientTest {
 
         final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE).get();
 
-        assertTrue("Request to " + request.url() + " isn't successful", response.isSuccessful());
+        assertTrue(response.isSuccessful(), "Request to " + request.url() + " isn't successful");
     }
 
     @Test
-    public void testInexistingUrl() throws ExecutionException, InterruptedException {
+    void testNonExistingUrl(JenkinsRule jenkinsRule) throws ExecutionException, InterruptedException {
         final OkHttpClient client = JenkinsOkHttpClient.newClientBuilder(new OkHttpClient())
                 .connectTimeout(Duration.ofSeconds(30))
                 .build();
@@ -101,11 +96,11 @@ public class ClientTest {
         final Response response = new OkHttpFuture<>(client.newCall(request), OkHttpFuture.GET_RESPONSE)
                 .exceptionally(ex -> null)
                 .get();
-        assertNull("A response was sent while none was expected due to calling a non existing URL", response);
+        assertNull(response, "A response was sent while none was expected due to calling a non existing URL");
     }
 
     @Test
-    public void testSimulatingListeners() throws ExecutionException, InterruptedException {
+    void testSimulatingListeners(JenkinsRule jenkinsRule) throws Exception {
         server.stubFor(
                 get("/").willReturn(ok("Hello"))
         );
@@ -126,7 +121,7 @@ public class ClientTest {
     }
 
     @Test
-    public void testTimeout() throws ExecutionException, InterruptedException {
+    void testTimeout(JenkinsRule jenkinsRule) throws Exception {
         server.stubFor(
                 get("/").willReturn(WireMock.aResponse().withFixedDelay(5000).withBody("Hello"))
         );
@@ -138,7 +133,7 @@ public class ClientTest {
         final Request request = new Request.Builder().get().url(server.baseUrl()).build();
 
         final CompletableFuture<Optional<Throwable>> future = new OkHttpFuture<>(client.newCall(request), (call, response) -> Optional.<Throwable>empty())
-                .exceptionally(throwable -> Optional.of(throwable));
+                .exceptionally(Optional::of);
 
         final Optional<Throwable> response = future.get();
 
@@ -149,8 +144,8 @@ public class ClientTest {
 
 
     @Test
-    public void testProxy() throws ExecutionException, InterruptedException, IOException {
-        jenkinsRule.jenkins.setProxy(new ProxyConfiguration(InetAddress.getLoopbackAddress().getHostAddress(), proxy.port(), "proxy-user", "proxy-pass"));
+    void testProxy(JenkinsRule jenkinsRule) throws Exception {
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration(InetAddress.getLoopbackAddress().getHostAddress(), proxy.getPort(), "proxy-user", "proxy-pass"));
         secureProxy("Basic", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
@@ -167,8 +162,8 @@ public class ClientTest {
     }
 
     @Test
-    public void testProxyWithBasicAuthAndRealm() throws ExecutionException, InterruptedException, IOException {
-        jenkinsRule.jenkins.setProxy(new ProxyConfiguration(InetAddress.getLoopbackAddress().getHostAddress(), proxy.port(), "proxy-user", "proxy-pass"));
+    void testProxyWithBasicAuthAndRealm(JenkinsRule jenkinsRule) throws Exception {
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration(InetAddress.getLoopbackAddress().getHostAddress(), proxy.getPort(), "proxy-user", "proxy-pass"));
         secureProxy("Basic realm=\"somerealm\"", "proxy-user:proxy-pass");
         server.stubFor(WireMock.get("/hello").willReturn(aResponse().proxiedFrom(proxy.baseUrl())));
 
@@ -184,14 +179,14 @@ public class ClientTest {
     }
 
     @Test
-    public void testProxySelector() throws URISyntaxException {
+    void testProxySelector(JenkinsRule jenkinsRule) throws Exception {
         final String noProxyHosts = new StringJoiner("|")
                 .add("1.2.3.4")
                 .add("*.jenkins.io")
                 .add("my*.super-jenkins.io")
                 .toString();
 
-        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.port(), null, null, noProxyHosts));
+        jenkinsRule.jenkins.setProxy(new ProxyConfiguration("127.0.0.1", proxy.getPort(), null, null, noProxyHosts));
         final JenkinsProxySelector proxySelector = new JenkinsProxySelector();
 
         final URI[] urisThatShouldNotUseProxy = {
@@ -203,8 +198,8 @@ public class ClientTest {
 
         for (final URI uri : urisThatShouldNotUseProxy) {
             final List<Proxy> proxies = proxySelector.select(uri);
-            assertEquals("Not only one proxy returned for URI " + uri, 1, proxies.size());
-            assertEquals("A proxy different from NO_PROXY is sent for " + uri, Proxy.NO_PROXY, proxies.get(0));
+            assertEquals(1, proxies.size(), "Not only one proxy returned for URI " + uri);
+            assertEquals(Proxy.NO_PROXY, proxies.get(0), "A proxy different from NO_PROXY is sent for " + uri);
         }
     }
 }
