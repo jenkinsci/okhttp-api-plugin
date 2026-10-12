@@ -26,10 +26,12 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSource;
 import org.hamcrest.Matchers;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.RealJenkinsRule;
+import org.testcontainers.DockerClientFactory;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -40,6 +42,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * Real(ish) end to end tests with a real Proxy (because wiremocks proxy is not quite real enough)
@@ -48,6 +51,16 @@ public class ProxyITest {
 
     @Rule 
     public RealJenkinsRule rjr = new RealJenkinsRule().javaOptions("-Xmx256M").withLogger(JenkinsProxyAuthenticator.class, Level.FINEST);
+
+    @Before
+    public void checkDocker() {
+        // run as a Before so that individual tests are marked as skipped
+        DockerClientFactory dcf = DockerClientFactory.instance();
+        assumeTrue("Tests require Linux container support", dcf.isDockerAvailable());
+        // ci.jenkins.io windows agents have Docker installed but use windows containers not Linux containers.
+        String osType = dcf.getInfo().getOsType();
+        assumeTrue("Tests require a Linux container support but found " + osType, "linux".equalsIgnoreCase(osType));
+    }
 
     @Test
     public void testPreEmptiveProxyAuth() throws Throwable {
