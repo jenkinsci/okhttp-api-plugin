@@ -20,7 +20,7 @@ import org.jvnet.hudson.test.RealJenkinsRule;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.images.builder.Transferable;
+import org.testcontainers.images.builder.ImageFromDockerfile;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
@@ -54,7 +54,7 @@ public class ProxyITest {
         Matcher<String> squidLogMatcher = allOf(
                 not(containsString("TCP_DENIED/407 CONNECT dns.google:443 - HIER_NONE/-")),
                 containsString("TCP_TUNNEL/200 CONNECT dns.google:443 proxy-user HIER_DIRECT/dns.google"));
-        makeHttpCallAndCheckLogs(squidLogMatcher);
+        makeHttpCallAndCheckSquidAccessLogs(squidLogMatcher);
     }
 
     @Test
@@ -63,10 +63,10 @@ public class ProxyITest {
         Matcher<String> squidLogMatcher = stringContainsInOrder(
                 "TCP_DENIED/407 CONNECT dns.google:443 - HIER_NONE/-",
                 "TCP_TUNNEL/200 CONNECT dns.google:443 proxy-user HIER_DIRECT/dns.google");
-        makeHttpCallAndCheckLogs(squidLogMatcher);
+        makeHttpCallAndCheckSquidAccessLogs(squidLogMatcher);
     }
 
-    public void makeHttpCallAndCheckLogs(Matcher<String> squidLogMatcher) throws Throwable {
+    public void makeHttpCallAndCheckSquidAccessLogs(Matcher<String> squidLogMatcher) throws Throwable {
         try (GenericContainer<?> squid = createSquidContainer()) {
             squid.start();
 
@@ -99,33 +99,11 @@ public class ProxyITest {
     /** A Squid proxy wrapped in a GenericContainer */
     @SuppressWarnings({ "resource"})
     private static GenericContainer<?> createSquidContainer() {
-        // Minimal Squid config: allow CONNECT to any port (WireMock uses dynamic ports).
-        final String squidConf = """
-                # custom log format to make checking access more stable (no times, bytes transferred or IP addresses)
-                logformat custom %Ss/%03>Hs %rm %ru %[un %Sh/%<A
-                # use stdio logging so that entries are not buffered but written immediately
-                access_log stdio:/var/log/squid/access.log custom
-
-                # setup authentication
-                auth_param basic program /usr/lib/squid/basic_fake_auth
-                auth_param basic realm MySuperSecureRealm
-                acl authenticated proxy_auth REQUIRED
-
-                # allow access from non local networks as the container may be on a non NIC (e.g. windows)
-                acl localnet src all
-
-                # allow authenicates users from anywhere and deny anything else
-                http_access allow authenticated localhost
-                http_access allow authenticated localnet
-                http_access deny all
-
-                http_port 3128
-                coredump_dir /var/spool/squid
-                """;
-
-        return new GenericContainer<>("ubuntu/squid:latest")
+        return new GenericContainer<>(new ImageFromDockerfile()
+                .withFileFromClasspath("Dockerfile", "jenkins/plugins/okhttp/api/ProxyITest/DockerFile")
+                .withFileFromClasspath("squid.conf", "jenkins/plugins/okhttp/api/ProxyITest/squid.conf")
+                .withFileFromClasspath("htpasswd", "jenkins/plugins/okhttp/api/ProxyITest/htpasswd"))
                 .withExposedPorts(3128)
-                .withCopyToContainer(Transferable.of(squidConf), "/etc/squid/squid.conf")
                 .waitingFor(Wait.forListeningPort());
     }
 

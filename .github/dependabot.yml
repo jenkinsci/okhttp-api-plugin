@@ -9,3 +9,7 @@ updates:
   directory: /
   schedule:
     interval: daily
+- package-ecosystem: docker
+  directory: /src/test/resources/jenkins/plugins/okhttp/api/ProxyITest
+  schedule:
+    interval: weekly

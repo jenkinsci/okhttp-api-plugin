@@ -40,6 +40,7 @@ public class JenkinsProxyAuthenticator implements Authenticator {
 
         if (response.request().header("Proxy-Authorization") != null) {
             // If the header is not null, it means an authentication attempt failed. So giving up
+            LOGGER.fine("Proxy already refused our authentication, giving up");
             return null;
         }
         if (response.code() == HttpURLConnection.HTTP_PROXY_AUTH) {
