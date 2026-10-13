@@ -100,7 +100,7 @@ public class ProxyITest {
     @SuppressWarnings({ "resource"})
     private static GenericContainer<?> createSquidContainer() {
         return new GenericContainer<>(new ImageFromDockerfile()
-                .withFileFromClasspath("Dockerfile", "jenkins/plugins/okhttp/api/ProxyITest/DockerFile")
+                .withFileFromClasspath("Dockerfile", "jenkins/plugins/okhttp/api/ProxyITest/Dockerfile")
                 .withFileFromClasspath("squid.conf", "jenkins/plugins/okhttp/api/ProxyITest/squid.conf")
                 .withFileFromClasspath("htpasswd", "jenkins/plugins/okhttp/api/ProxyITest/htpasswd"))
                 .withExposedPorts(3128)
