@@ -49,7 +49,7 @@ public class ProxyITest {
 
     @Test
     public void testPreEmptiveProxyAuth() throws Throwable {
-        rjr.javaOptions("-Dplugins.okhttp-api.proxy.preemptive-auth-enabled=true");
+        rjr.javaOptions("-D"+JenkinsProxyAuthenticator.PREEMTPTIVE_AUTH_PROPERTY+"=true");
         // we should not see any proxy authentication request (407)
         Matcher<String> squidLogMatcher = allOf(
                 not(containsString("TCP_DENIED/407 CONNECT dns.google:443 - HIER_NONE/-")),
