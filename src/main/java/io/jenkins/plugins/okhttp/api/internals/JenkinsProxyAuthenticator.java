@@ -25,9 +25,9 @@ public class JenkinsProxyAuthenticator implements Authenticator {
 
     private static final Logger LOGGER = Logger.getLogger(JenkinsProxyAuthenticator.class.getName());
 
-    public static final String PREEMTPTIVE_AUTH_PROPERTY = "plugins.okhttp-api.proxy.preemptive-auth-enabled";
+    public static final String PREEMPTIVE_AUTH_PROPERTY = "plugins.okhttp-api.proxy.preemptive-auth-enabled";
     /** Flag to enable pre-emtpive authentication for a proxy when doing HTTPS tunnelling (CONNECT) */
-    private static final boolean usePreemptiveAuth = SystemProperties.getBoolean(PREEMTPTIVE_AUTH_PROPERTY, false);
+    private static final boolean usePreemptiveAuth = SystemProperties.getBoolean(PREEMPTIVE_AUTH_PROPERTY, false);
 
     @Nullable
     @Override
