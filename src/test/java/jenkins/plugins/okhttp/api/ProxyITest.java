@@ -75,7 +75,7 @@ public class ProxyITest {
 
             // use google.dns as a test URL so we do not have to mess with docker networking 
             // to enable squid to access things on potentially different (local) networks.
-            // google dns is highly available and is does not have internationization
+            // Google DNS is highly available and it does not have internationalization
             final String testURL = "https://dns.google/";
 
             // start Jenkins, make a single call via the proxy.
