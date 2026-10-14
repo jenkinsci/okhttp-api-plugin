@@ -27,7 +27,7 @@ public class JenkinsProxyAuthenticator implements Authenticator {
 
     public static final String PREEMPTIVE_AUTH_PROPERTY = "plugins.okhttp-api.proxy.preemptive-auth-enabled";
     /** Flag to enable pre-emtpive authentication for a proxy when doing HTTPS tunnelling (CONNECT) */
-    private static final boolean usePreemptiveAuth = SystemProperties.getBoolean(PREEMPTIVE_AUTH_PROPERTY, false);
+    private static final boolean USE_PREEMPTIVE_AUTH = SystemProperties.getBoolean(PREEMPTIVE_AUTH_PROPERTY, false);
 
     @Nullable
     @Override
@@ -58,7 +58,7 @@ public class JenkinsProxyAuthenticator implements Authenticator {
                 // so there is no need check case insensitively.
                 if ("OkHttp-Preemptive".equals(challenge.scheme())) {
                     wasPreemptiveAuth = true;
-                    if (usePreemptiveAuth) {
+                    if (USE_PREEMPTIVE_AUTH) {
                         LOGGER.finest("Attempting preemptive authentication against proxy");
                         final String credential = Credentials.basic(proxy.getUserName(), Secret.toString(proxy.getSecretPassword()), challenge.charset());
                         return response.request().newBuilder()
