@@ -25,7 +25,7 @@
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <properties>
-    <revision>5.3.2</revision>
+    <revision>5.5.0</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
@@ -39,8 +39,8 @@
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
       if updating these ensure the used transitive deps that have their version managed are updated as direct dependencies and any unused ones are removed.
     -->
-    <okio.version>3.16.4</okio.version>
-    <kotlin.version>2.2.21</kotlin.version>
+    <okio.version>3.18.2</okio.version>
+    <kotlin.version>2.4.21</kotlin.version>
   </properties>
 
   <dependencyManagement>
