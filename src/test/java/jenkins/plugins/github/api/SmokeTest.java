@@ -16,7 +16,7 @@ import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
 import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
-import org.kohsuke.github.extras.okhttp3.OkHttpConnector;
+import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -39,7 +39,7 @@ class SmokeTest {
     static Stream<IOFunction> connectFunctions() {
         return Stream.of(
                 mock -> GitHub.connectToEnterpriseAnonymously(mock.open()),
-                mock -> new GitHubBuilder().withConnector(new OkHttpConnector(new OkHttpClient())).withEndpoint(mock.open()).build()
+                mock -> new GitHubBuilder().withConnector(new OkHttpGitHubConnector(new OkHttpClient())).withEndpoint(mock.open()).build()
         );
     }
 
