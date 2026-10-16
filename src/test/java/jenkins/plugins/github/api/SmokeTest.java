@@ -20,6 +20,7 @@ import org.kohsuke.github.extras.okhttp3.OkHttpConnector;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SmokeTest {
 
@@ -82,7 +83,7 @@ class SmokeTest {
             }
             Set<String> actual = new TreeSet<>();
             for (GHRepository r: openAndConnect(connectFunction, mock).listAllPublicRepositories()) {
-                actual.add(r.getFullName());
+                assertTrue(actual.add(r.getFullName()), "repo with name already added: " + r.getFullName());
             }
             assertThat(actual, is(expected));
         }

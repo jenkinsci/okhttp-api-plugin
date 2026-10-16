@@ -328,7 +328,7 @@ public class MockGitHub implements Closeable {
             List<MockRepository> repositories = new ArrayList<>();
             for (MockOwner<?> o : github.owners()) {
                 for (MockRepository r : o.repositories().values()) {
-                    if (r.getId() > since && !r.isPrivate()) {
+                    if (r.getId() >= since && !r.isPrivate()) {
                         repositories.add(r);
                     }
                 }
