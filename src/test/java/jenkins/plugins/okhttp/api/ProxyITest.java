@@ -12,11 +12,11 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okio.BufferedSource;
 import org.hamcrest.Matcher;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.jvnet.hudson.test.JenkinsRule;
-import org.jvnet.hudson.test.RealJenkinsRule;
+import org.jvnet.hudson.test.junit.jupiter.RealJenkinsExtension;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -27,24 +27,24 @@ import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.stringContainsInOrder;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
  * Real end to end tests with a real Proxy (because wiremocks proxy is not quite real enough)
  */
 public class ProxyITest {
 
-    @Rule 
-    public RealJenkinsRule rjr = new RealJenkinsRule().javaOptions("-Xmx256M").withLogger(JenkinsProxyAuthenticator.class, Level.FINEST);
+    @RegisterExtension 
+    public RealJenkinsExtension rjr = new RealJenkinsExtension().javaOptions("-Xmx256M").withLogger(JenkinsProxyAuthenticator.class, Level.FINEST);
 
-    @Before
+    @BeforeEach
     public void checkDocker() {
         // run as a Before so that individual tests are marked as skipped
         DockerClientFactory dcf = DockerClientFactory.instance();
-        assumeTrue("Tests require Linux container support", dcf.isDockerAvailable());
+        assumeTrue(dcf.isDockerAvailable(), "Tests require Linux container support");
         // ci.jenkins.io windows agents have Docker installed but use windows containers not Linux containers.
         String osType = dcf.getInfo().getOsType();
-        assumeTrue("Tests require a Linux container support but found " + osType, "linux".equalsIgnoreCase(osType));
+        assumeTrue("linux".equalsIgnoreCase(osType), "Tests require a Linux container support but found " + osType);
     }
 
     @Test

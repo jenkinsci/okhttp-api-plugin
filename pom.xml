@@ -34,6 +34,7 @@
     <hpi.bundledArtifacts>kotlin-stdlib,kotlin-stdlib-jdk7,kotlin-stdlib-jdk8,logging-interceptor,okhttp,okhttp-jvm,okio,okio-jvm</hpi.bundledArtifacts>
     <hpi.strictBundledArtifacts>true</hpi.strictBundledArtifacts>
     <no-test-jar>false</no-test-jar>
+    <ban-junit4-imports.skip>false</ban-junit4-imports.skip>
     <!-- 
       beware https://github.com/jenkinsci/plugin-pom/issues/705 and https://github.com/jenkinsci/plugin-pom/issues/707
       if updating these ensure the used transitive deps that have their version managed are updated as direct dependencies and any unused ones are removed.
