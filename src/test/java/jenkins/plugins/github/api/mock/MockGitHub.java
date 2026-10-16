@@ -328,7 +328,7 @@ public class MockGitHub implements Closeable {
             List<MockRepository> repositories = new ArrayList<>();
             for (MockOwner<?> o : github.owners()) {
                 for (MockRepository r : o.repositories().values()) {
-                    if (r.getId() >= since && !r.isPrivate()) {
+                    if (r.getId() > since && !r.isPrivate()) {
                         repositories.add(r);
                     }
                 }
@@ -340,7 +340,7 @@ public class MockGitHub implements Closeable {
                                 "Link",
                                 String.format(
                                         "<%s/repositories?since=%d>; rel=\"next\", <%s/repositories{?since}>; rel=\"first\"",
-                                        github.getUrl(), repositories.get(30).getId(), github.getUrl()));
+                                        github.getUrl(), repositories.get(29).getId(), github.getUrl()));
             } else {
                 he.getResponseHeaders()
                         .set("Link", String.format("<%s/repositories{?since}>; rel=\"first\"", github.getUrl()));
